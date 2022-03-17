@@ -1,0 +1,66 @@
+#logging into the cyverse terminal
+#find instructions for iCommands download here: https://learning.cyverse.org/projects/data_store_guide/en/latest/step2.html#
+
+#check that iRODS commands are working
+ils
+
+#upload individual lizard fq.gz files (instructions: https://tinyurl.com/muatz2kw)
+iput -rPT /icloud/2.research/crots/ddRAD/processed3_f_m /iplant/home/jwiggi18/data/ccol/stacks_processed
+
+#unzip the fq.gz files
+icd data/ccol/stacks_processed
+gunzip -r "$processed3_f_m"
+
+#navigate to home directory
+icd 
+
+#make empty directory for reference genome
+imkdir -p data/ref_genome
+
+#locate genome
+# search: https://www.ncbi.nlm.nih.gov/assembly/?term=Anolis+carolinensis
+# click: AnoCar2.0
+# on the right click 'FTP directory for GenBank Assembly'
+#get reference genome
+curl -L -o data/ref_genome/acar.fasta.gz ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/090/745/GCA_000090745.2_AnoCar2.0/GCA_000090745.2_AnoCar2.0_genomic.fna.gz 
+
+#unzip
+gunzip data/ref_genome/acar.fasta.gz
+
+#make directories for file types
+imkdir -p results/sam results/bam results/bcf results/vcf
+
+# BWA http://bio-bwa.sourceforge.net/bwa.shtml
+#create an index for the reference genome
+bwa index data/ref_genome/acar.fasta
+
+#variant call on on a single individual to test the code
+
+#use bwa to produce a sam file
+bwa mem data/ref_genome/acar.fasta data/ccol/stacks_processed/processed3_f_m/cc_f/CC_F_BG119.fq > results/sam/CC_F_BG119.aligned.sam 
+
+#Samtools https://genome.sph.umich.edu/wiki/SAM
+#convert binary SAM file to BAM file with input SAM (-S) and output BAM (-b)
+samtools view -S -b results/sam/CC_F_BG119.aligned.sam > results/bam/CC_F_BG119.aligned.bam
+
+#sort the BAM file according to the reference genome (-o location of output)
+samtools sort -o results/bam/CC_F_BG119.aligned.sorted.bam results/bam/CC_F_BG119.aligned.bam 
+
+#look at flags (what are our issues?)
+samtools flagstat results/bam/CC_F_BG119.aligned.sorted.bam
+
+#bcftools
+#count read depth, generate a bcf output (-O b), where and what the output (-o), reference genome location (-f)
+bcftools mpileup -O b -o results/bcf/SRR2584866_raw.bcf \
+-f data/ref_genome/acar.fasta results/bam/CC_F_BG119.aligned.sorted.bam 
+
+#detect variants, allow for multialleleic and rare variants (-m), output variant sites only (-v), where and what the output (-o)
+bcftools call --ploidy 2 -m -v -o results/vcf/CC_F_BG119_variants.vcf results/bcf/CC_F_BG119_raw.bcf 
+
+#filter & report variants in variaint calling format (vcf) using samtools' vcfutils.pl
+vcfutils.pl varFilter results/vcf/CC_F_BG119_variants.vcf  > results/vcf/CC_F_BG119_final_variants.vcf
+
+#check to see how many variants were removed
+wc -l results/vcf/*
+
+
