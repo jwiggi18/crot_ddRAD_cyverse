@@ -1,21 +1,25 @@
-#logging into the cyverse terminal
-#find instructions for iCommands download here: https://learning.cyverse.org/projects/data_store_guide/en/latest/step2.html#
+#creating crot vcf file with acar refrence genome locally
 
-#check that iRODS commands are working
-ils
+#create new folder system for vcf analysis
+#cd to the crots ddRAD file
+#filepath doesn't work on desktop... *screams and bangs head on keyboard*
+cd ~/iCloud/com~apple~CloudDocs/2.research/crots/ddRAD
 
-#upload individual lizard fq.gz files (instructions: https://tinyurl.com/muatz2kw)
-iput -rPT /icloud/2.research/crots/ddRAD/processed3_f_m /iplant/home/jwiggi18/data/ccol/stacks_processed
+#make a directory called 'vcf' with subdirectories 'data' and 'results'
+mkdir vcf/data vcf/results
+
+#move the file containing individual lizard .gz files and move it to 'vcf/data'
+mv 
 
 #unzip the fq.gz files
-icd data/ccol/stacks_processed
+cd data
 gunzip -r "$processed3_f_m"
 
-#navigate to home directory
-icd 
+#navigate to vcf directory
+cd ..
 
 #make empty directory for reference genome
-imkdir -p data/ref_genome
+mkdir -p data/ref_genome
 
 #locate genome
 # search: https://www.ncbi.nlm.nih.gov/assembly/?term=Anolis+carolinensis
@@ -28,7 +32,7 @@ curl -L -o data/ref_genome/acar.fasta.gz ftp://ftp.ncbi.nlm.nih.gov/genomes/all/
 gunzip data/ref_genome/acar.fasta.gz
 
 #make directories for file types
-imkdir -p results/sam results/bam results/bcf results/vcf
+mkdir -p results/sam results/bam results/bcf results/vcf
 
 # BWA http://bio-bwa.sourceforge.net/bwa.shtml
 #create an index for the reference genome
@@ -37,7 +41,7 @@ bwa index data/ref_genome/acar.fasta
 #variant call on on a single individual to test the code
 
 #use bwa to produce a sam file
-bwa mem data/ref_genome/acar.fasta data/ccol/stacks_processed/processed3_f_m/cc_f/CC_F_BG119.fq > results/sam/CC_F_BG119.aligned.sam 
+bwa mem data/ref_genome/acar.fasta data/processed3_f_m/cc_f/CC_F_BG119.fq > results/sam/CC_F_BG119.aligned.sam 
 
 #Samtools https://genome.sph.umich.edu/wiki/SAM
 #convert binary SAM file to BAM file with input SAM (-S) and output BAM (-b)
