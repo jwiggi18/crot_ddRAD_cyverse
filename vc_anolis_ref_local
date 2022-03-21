@@ -1,19 +1,35 @@
 #creating crot vcf file with acar refrence genome locally
 
+#note: if workign in iCloud, make sure your files are downloaded from the cloud or the shell can't 'see' them
+
 #create new folder system for vcf analysis
 #cd to the crots ddRAD file
-#filepath doesn't work on desktop... *screams and bangs head on keyboard*
-cd ~/iCloud/com~apple~CloudDocs/2.research/crots/ddRAD
+#laptop filepath
+#cd ~/iCloud/com~apple~CloudDocs/2.research/crots/ddRAD
+
+#desktop filepath
+cd ~/Library/Mobile\ Documents/com~apple~CloudDocs/2.research/crots/ddRAD
 
 #make a directory called 'vcf' with subdirectories 'data' and 'results'
+mkdir vcf
 mkdir vcf/data vcf/results
 
 #move the file containing individual lizard .gz files and move it to 'vcf/data'
-mv 
+mv processed3_f_m vcf/data
 
-#unzip the fq.gz files
-cd data
-gunzip -r "$processed3_f_m"
+#check that folder moved
+cd vcf/data
+ls
+
+#couldnt get recursive to work
+#recursively unzip the fq.gz files
+#gunzip -r "$processed3_f_m"
+
+#unzip files
+cd processed3_f_m/cc_f
+gunzip *.gz
+cd ../cc_m
+gunzip *.gz
 
 #navigate to vcf directory
 cd ..
@@ -44,6 +60,7 @@ bwa index data/ref_genome/acar.fasta
 bwa mem data/ref_genome/acar.fasta data/processed3_f_m/cc_f/CC_F_BG119.fq > results/sam/CC_F_BG119.aligned.sam 
 
 #Samtools https://genome.sph.umich.edu/wiki/SAM
+#download here: http://www.htslib.org/download/
 #convert binary SAM file to BAM file with input SAM (-S) and output BAM (-b)
 samtools view -S -b results/sam/CC_F_BG119.aligned.sam > results/bam/CC_F_BG119.aligned.bam
 
@@ -55,8 +72,7 @@ samtools flagstat results/bam/CC_F_BG119.aligned.sorted.bam
 
 #bcftools
 #count read depth, generate a bcf output (-O b), where and what the output (-o), reference genome location (-f)
-bcftools mpileup -O b -o results/bcf/CC_F_BG119_raw.bcf \
--f data/ref_genome/acar.fasta results/bam/CC_F_BG119.aligned.sorted.bam 
+bcftools mpileup -O b -o results/bcf/CC_F_BG119_raw.bcf -f data/ref_genome/acar.fasta results/bam/CC_F_BG119.aligned.sorted.bam 
 
 #detect variants, allow for multialleleic and rare variants (-m), output variant sites only (-v), where and what the output (-o)
 bcftools call --ploidy 2 -m -v -o results/vcf/CC_F_BG119_variants.vcf results/bcf/CC_F_BG119_raw.bcf 
