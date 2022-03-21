@@ -83,4 +83,6 @@ vcfutils.pl varFilter results/vcf/CC_F_BG119_variants.vcf  > results/vcf/CC_F_BG
 #check to see how many variants were removed
 wc -l results/vcf/*
 
+#index the BAM file for visualization
+samtools index results/bam/CC_F_BG119.aligned.sorted.bam
 
