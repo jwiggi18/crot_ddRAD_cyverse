@@ -13,18 +13,23 @@ echo " before running this script cd ~/Library/Mobile\ Documents/com~apple~Cloud
 genome=vcf/data/ref_genome/acar.fasta
 
 #folder name within each results folder type (sam, bam, bcf, vcf). file structure = ddRAD/vcf/results/sam/all_only_female
-location=all_only_female
+#location=all_only_female
+location=all_only_male 
+
+#m or f depending on which sex is being analyzed
+#sex=f
+sex=m
 
 #use a loop to run the variant calling workflow on each FASTQ file
 #assign the name of the FASTQ file we are working with to a variable called fq1 and tell the script to echo the file name
-for fq1 in vcf/data/processed3_f_m/cc_f/*.fq
+for fq1 in vcf/data/processed3_f_m/cc_${sex}/*.fq
     do
     echo "working with file $fq1"
 #extract the base name of the file (excluding the path and .fastq extension) and assign it to a new variable called base
     base=$(basename $fq1 .fq)
     echo "base name is $base"
 
-    fq1=vcf/data/processed3_f_m/cc_f/${base}.fq
+    fq1=vcf/data/processed3_f_m/cc_${sex}/${base}.fq
 
     sam=vcf/results/sam/${location}/${base}.aligned.sam
 
