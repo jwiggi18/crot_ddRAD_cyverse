@@ -65,3 +65,5 @@ for fq1 in vcf/data/processed3_f_m/cc_${sex}/*.fq
     vcfutils.pl varFilter $variants > $final_variants
 
     done
+
+

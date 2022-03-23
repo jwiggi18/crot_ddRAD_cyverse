@@ -5,10 +5,10 @@
 #create new folder system for vcf analysis
 #cd to the crots ddRAD file
 #laptop filepath
-#cd ~/iCloud/com~apple~CloudDocs/2.research/crots/ddRAD
+cd ~/iCloud/com~apple~CloudDocs/2.research/crots/ddRAD
 
 #desktop filepath
-cd ~/Library/Mobile\ Documents/com~apple~CloudDocs/2.research/crots/ddRAD
+#cd ~/Library/Mobile\ Documents/com~apple~CloudDocs/2.research/crots/ddRAD
 
 #make a directory called 'vcf' with subdirectories 'data' and 'results'
 mkdir vcf
@@ -71,7 +71,7 @@ samtools sort -o results/bam/CC_F_BG119.aligned.sorted.bam results/bam/CC_F_BG11
 samtools flagstat results/bam/CC_F_BG119.aligned.sorted.bam
 
 #bcftools
-#count read depth, generate a bcf output (-O b), where and what the output (-o), reference genome location (-f)
+#count read depth, generate a bcf output (-O b), where and what the output (-o), reference genome location (-f), input
 bcftools mpileup -O b -o results/bcf/CC_F_BG119_raw.bcf -f data/ref_genome/acar.fasta results/bam/CC_F_BG119.aligned.sorted.bam 
 
 #detect variants, allow for multialleleic and rare variants (-m), output variant sites only (-v), where and what the output (-o)
