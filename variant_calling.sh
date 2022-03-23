@@ -61,7 +61,7 @@ for fq1 in vcf/data/processed3_f_m/cc_${sex}/*.fq
 #call SNVs with bcftools
     bcftools call --ploidy 2 -m -o $variants $raw_bcf
 
-#filter and report the SNVs in variant calling format (VCF)
+#filter and report the SNVs in variant calling format (VCF) using samtools' vcfutils.pl
     vcfutils.pl varFilter $variants > $final_variants
 
     done
