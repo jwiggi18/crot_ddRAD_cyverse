@@ -94,8 +94,13 @@ bash variant_calling.sh
 #for some reason that is beyond my comprehension but I am doing to assume isn't stupid (even thought it seems really stupid) we have to compress all the stupid .vcf files we just created to vcf.gz then index them with tabix to make bcftools happy so we can merge the stupid vcf files. I'm not cranky, you're cranky. 
 #how to loop this?
 bgzip -c file.vcf > file.vcf.gz
+#or 
+bcftools view file.vcf -Oz -o file.vcf.gz
+
 #index
 tabix -p vcf file.vcf.gz
+#or
+bcftools index file.vcf.gz
 
 #merge the resulting vcf files
 bcftools 
