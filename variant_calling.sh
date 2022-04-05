@@ -66,4 +66,19 @@ for fq1 in vcf/data/processed3_f_m/cc_${sex}/*.fq
 
     done
 
+#createpath variables
+bam_path=/vcf/results/bam
+female_folder=/all_only_female
 
+#to merge bam files
+samtools merge ${bam_path}${female_folder}test_merged.bam ${bam_path}${female_folder}/CC_F_BG119.aligned.sorted.bam ${bam_path}${female_folder}/CC_F_BG120.aligned.sorted.bam
+
+#something wrong with path variables - works from inside the all_only_female folder
+samtools merge test_merged.bam CC_F_BG119.aligned.sorted.bam CC_F_BG120.aligned.sorted.bam
+
+#create an index for the newly created merged.bam
+bcftools index test_merged.bam
+#(this is in a format that cannot usefully be indexed)
+
+#what if I merge the aligned bam files?
+samtools merge test2_merged.bam CC_F_BG119.aligned.bam CC_F_BG120.aligned.bam
