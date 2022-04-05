@@ -5,10 +5,10 @@
 #create new folder system for vcf analysis
 #cd to the crots ddRAD file
 #laptop filepath
-cd ~/iCloud/com~apple~CloudDocs/2.research/crots/ddRAD
+#cd ~/iCloud/com~apple~CloudDocs/2.research/crots/ddRAD
 
 #desktop filepath
-#cd ~/Library/Mobile\ Documents/com~apple~CloudDocs/2.research/crots/ddRAD
+cd ~/Library/Mobile\ Documents/com~apple~CloudDocs/2.research/crots/ddRAD
 
 #make a directory called 'vcf' with subdirectories 'data' and 'results'
 mkdir vcf
@@ -42,7 +42,7 @@ mkdir -p data/ref_genome
 # click: AnoCar2.0
 # on the right click 'FTP directory for GenBank Assembly'
 #get reference genome
-curl -L -o data/ref_genome/acar.fasta.gz ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/090/745/GCA_000090745.2_AnoCar2.0/GCA_000090745.2_AnoCar2.0_genomic.fna.gz 
+curl -L -o data/ref_genome/acar2.fasta.gz ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/090/745/GCA_000090745.2_AnoCar2.0/GCA_000090745.2_AnoCar2.0_genomic.fna.gz 
 
 #unzip
 gunzip data/ref_genome/acar.fasta.gz
@@ -71,7 +71,7 @@ samtools sort -o results/bam/CC_F_BG119.aligned.sorted.bam results/bam/CC_F_BG11
 samtools flagstat results/bam/CC_F_BG119.aligned.sorted.bam
 
 #bcftools
-#count read depth, generate a bcf output (-O b), where and what the output (-o), reference genome location (-f), input
+#count read depth, generate a bcf output (-O b), where and what the output (-o), reference genome location (-f)
 bcftools mpileup -O b -o results/bcf/CC_F_BG119_raw.bcf -f data/ref_genome/acar.fasta results/bam/CC_F_BG119.aligned.sorted.bam 
 
 #detect variants, allow for multialleleic and rare variants (-m), output variant sites only (-v), where and what the output (-o)
@@ -87,20 +87,3 @@ wc -l results/vcf/*
 samtools index results/bam/CC_F_BG119.aligned.sorted.bam
 
 
-
-#run the script to loop through all individuals
-bash variant_calling.sh
-
-#for some reason that is beyond my comprehension but I am doing to assume isn't stupid (even thought it seems really stupid) we have to compress all the stupid .vcf files we just created to vcf.gz then index them with tabix to make bcftools happy so we can merge the stupid vcf files. I'm not cranky, you're cranky. 
-#how to loop this?
-bgzip -c file.vcf > file.vcf.gz
-#or 
-bcftools view file.vcf -Oz -o file.vcf.gz
-
-#index
-tabix -p vcf file.vcf.gz
-#or
-bcftools index file.vcf.gz
-
-#merge the resulting vcf files
-bcftools 
