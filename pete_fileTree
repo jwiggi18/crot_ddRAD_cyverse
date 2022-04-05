@@ -1,0 +1,12 @@
+crots/
+L ddRAD/
+    L data/
+     L reference/
+        L samples/
+         L CC_F_BG110.fq
+    L results/
+        L vcf
+        L bam
+        L sam
+    L scripts/
+        L vc_test.sh
